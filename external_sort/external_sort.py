@@ -136,3 +136,4 @@ class BlockSorter:
                     changed = True
             if not changed:
                 return
+            i += 1
