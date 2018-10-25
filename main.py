@@ -6,8 +6,8 @@ from big_file_generator import CachedRowsGenerator
 from external_sort.external_sort import BlockSorter
 
 FILENAME = 'big_file.txt'
-LINES_IN_FILE = 10000
-MAX_STRING_SIZE = 100
+LINES_IN_FILE = 10000000
+MAX_STRING_SIZE = 1000
 
 
 def get_max_part_size(available, max_string_size: int):
