@@ -24,7 +24,7 @@ def get_max_part_size(available, max_string_size: int):
 
 if __name__ == '__main__':  # TODO: вынести в класс и тоже покрыть тестами
     mem = psutil.virtual_memory()
-    available_mem = (min(mem.available, 10485760))  # Искусственно ограничим до 1 Mb
+    available_mem = (min(mem.available, 10485760))  # Искусственно ограничим до 10 Mb
     max_part_size = get_max_part_size(available_mem, MAX_STRING_SIZE)
     if max_part_size <= 20:  # 20 - минимальный буфер
         print("Can't work without memory", file=sys.stderr)
