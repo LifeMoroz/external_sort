@@ -31,7 +31,7 @@ if __name__ == '__main__':  # TODO: вынести в класс и тоже п�
         # TODO: или может, если делать merge не в памяти, но не за 4 часа =)
         sys.exit(-1)
 
-    generator = CachedRowsGenerator(LINES_IN_FILE, MAX_STRING_SIZE)  # ~ 47 Mb generated
+    generator = CachedRowsGenerator(LINES_IN_FILE, MAX_STRING_SIZE)  # ~ 4.8 Gb generated
     if not generator.generate(FILENAME):
         print("Failed to generate file", file=sys.stderr)
         sys.exit(-1)
