@@ -1,15 +1,19 @@
 import gc
 from typing import Tuple
 
+import os
+
 
 class BlockSorter:
-    BLOCK_FILENAME_TEMPLATE = 'block/block_{}.txt'
+    BLOCK_DIRNAME = 'block'
+    BLOCK_FILENAME_TEMPLATE = BLOCK_DIRNAME + '/block_{}.txt'  # py3.5
 
     def __init__(self, part_size: int):
         """
         :param part_size: размер блока
         """
         self.part_size = part_size
+        self.blocks_number = 0
 
     @classmethod
     def _sort(cls, array: list) -> list:
@@ -69,21 +73,22 @@ class BlockSorter:
         :param file: файловый дескриптор и дробит его на блоки, каждый блок внутри сортируется.
         :return: количество блоков
         """
-        block_counter = 0
+        os.makedirs(self.BLOCK_DIRNAME)
+        self.blocks_number = 0
         lines = []
         for line in file:
             lines.append(line)
             if len(lines) != self.part_size:
                 continue
-            print('Split step', block_counter, 'of')
+            print('Split step', self.blocks_number, 'of')
             self._sort(lines)  # In-place sort
-            self.fill_block(block_counter, ''.join(lines))
-            block_counter += 1
+            self.fill_block(self.blocks_number, ''.join(lines))
+            self.blocks_number += 1
             lines.clear()
         self._sort(lines)  # In-place sort
-        self.fill_block(block_counter, ''.join(lines))
-        block_counter += 1
-        return block_counter
+        self.fill_block(self.blocks_number, ''.join(lines))
+        self.blocks_number += 1
+        return self.blocks_number
 
     def sort_blocks(self, block_number_1: int, block_number_2: int):
         """
@@ -103,13 +108,26 @@ class BlockSorter:
         self.fill_block(block_number_2, ''.join(sorted_blocks[self.part_size:]))
         return changed
 
-    def sort(self, fd) -> None:
-        block_counter = self.split(fd)
+    def write_to_file(self, fd):
+        for block_number in range(self.blocks_number):
+            with open(self.BLOCK_FILENAME_TEMPLATE.format(block_number), 'r') as file:
+                for line in file:
+                    fd.write(line)
 
-        if block_counter == 0:  # Пустой файл
+    def clean(self):
+        os.rmdir(self.BLOCK_DIRNAME)
+
+    def sort(self, fd) -> None:
+        self.split(fd)
+
+        if self.blocks_number == 0:  # Пустой файл
             return
 
         i = 1
-        while i < block_counter:
-            for j in range(block_counter - i):
-                self.sort_blocks(j, j+1)
+        while i < self.blocks_number:
+            changed = False
+            for j in range(self.blocks_number - i):
+                if self.sort_blocks(j, j+1):
+                    changed = True
+            if not changed:
+                return
