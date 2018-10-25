@@ -14,7 +14,8 @@ def get_max_part_size(available, max_string_size: int):
     """
     Не строгий подсчёт памяти, рассчёт самого худшего случая и небольшой запас на "неучтённые расходы"
     """
-    size = available - 120  # 3 указателя на массив для merge_sort
+    size = available - 1048576
+    size = size - 120  # 3 указателя на массив для merge_sort
     size = size / 4  # Худший случай, если за merge_sort gc ни разу не зайдёт
     size = size - 25 * size / max_string_size  # Если бы мы создавали строки на всю доступную память, то это - указатели
     size = size / max_string_size  # Максимальное количество строк
