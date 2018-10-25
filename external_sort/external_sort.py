@@ -1,7 +1,8 @@
 import gc
-from typing import Tuple
-
 import os
+import shutil
+import sys
+from typing import Tuple
 
 
 class BlockSorter:
@@ -62,7 +63,7 @@ class BlockSorter:
 
     def fill_block(self, block_number: int, data: str) -> None:
         with open(self.BLOCK_FILENAME_TEMPLATE.format(block_number), 'w+') as file:
-            file.write(data.rstrip())
+            file.write(data)
 
     def read_block(self, block_number: int) -> list:
         with open(self.BLOCK_FILENAME_TEMPLATE.format(block_number), 'r') as file:
@@ -73,7 +74,11 @@ class BlockSorter:
         :param file: файловый дескриптор и дробит его на блоки, каждый блок внутри сортируется.
         :return: количество блоков
         """
-        os.makedirs(self.BLOCK_DIRNAME)
+        try:
+            os.makedirs(self.BLOCK_DIRNAME)
+        except OSError:
+            print('Возможно папка уже создана', file=sys.stderr)
+            pass
         self.blocks_number = 0
         lines = []
         for line in file:
@@ -115,7 +120,7 @@ class BlockSorter:
                     fd.write(line)
 
     def clean(self):
-        os.rmdir(self.BLOCK_DIRNAME)
+        shutil.rmtree(self.BLOCK_DIRNAME)
 
     def sort(self, fd) -> None:
         self.split(fd)

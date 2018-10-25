@@ -6,7 +6,7 @@ from big_file_generator import CachedRowsGenerator
 from external_sort.external_sort import BlockSorter
 
 FILENAME = 'big_file.txt'
-LINES_IN_FILE = 100000
+LINES_IN_FILE = 10000
 MAX_STRING_SIZE = 100
 
 
@@ -40,7 +40,7 @@ if __name__ == '__main__':  # TODO: вынести в класс и тоже п�
     sorter = BlockSorter(max_part_size)
     with open(FILENAME, 'r+') as file:
         sorter.sort(file)
-        file.seek(0)
+        file.truncate(0)
         sorter.write_to_file(file)
         sorter.clean()
 
